@@ -11,4 +11,7 @@
 3. print("This file is exactly PE") 부분을 자신이 필요한 방법으로 알맞게 수정합니다.
 
 참고 : MZ (0x4D 0x5A) PE (0x50 0x45 0x00 0x00)      
-32bit machine = 0x4C 0x01    64bit machine = 0x64 0x86   (PE 뒤에 있는 2bytes 를 보면 됩니다.)
+32bit machine = 0x4C 0x01 (Intel CPU)    64bit machine = 0x64 0x86   (PE 뒤에 있는 2bytes 를 보면 됩니다.)
+
+혹은 Magic 정보를 보면 됩니다. PE 다음 으로부터의 21바이트가 0B 01이면 32bit machine
+좀더 포괄적으로 32bit를 알고싶으면 Magic 정보를 확인
