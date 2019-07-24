@@ -1,10 +1,12 @@
 import os
-import shutil
+import struct
 
-FILE_PATH = r'/home/seclab/Documents/meseum_data/virusshare'
-MOVE_PATH = r'/home/seclab/Documents/meseum_data/virusshare_only_pe_32_three'
+# FILE_PATH = r'/home/seclab/Documents/meseum_data/virussign'
+FILE_PATH = r'/home/seclab/Documents/meseum_data/virusshare_only_pe_32_two'
+characteristics_set = set()
+# final_n + 3 + 19
 
-def extract_pe(file_path):
+def check_characteristics(file_path):
     with open(file_path, 'rb') as f:
         data = f.read(2)
         if hex(data[0]) == hex(0x4D) and hex(data[1]) == hex(0x5A):
@@ -21,19 +23,17 @@ def extract_pe(file_path):
             # print(data[final_n:final_n + 2])
             if hex(data[final_n]) == hex(0x50) and hex(data[final_n + 1]) == hex(0x45) and hex(data[final_n + 2]) == hex(0x00) and hex(data[final_n + 3]) == hex(0x00):
                 if hex(data[final_n + 3 + 21]) == hex(0x0B) and hex(data[final_n + 3 + 22]) == hex(0x01):
-                    return True
-            return False
+                    num = data[final_n+3+19:final_n+3+21]
+                    num = int.from_bytes(num, byteorder='little', signed=False)
+                    # 0x2000 -> DLL, 0x0002 -> File is a executable
+                    if (num & 0x2000) == 0x2000:
+                        return "File is a DLL"
+                    return "This file is not DLL"
+
 
 if __name__ == '__main__':
-    for _path, _dir, _files in os.walk(FILE_PATH):
+    for _path, _dir, files in os.walk(FILE_PATH):
         if not _dir:
-            for file_name in _files:
-                fp = os.path.join(_path, file_name)
-                try:
-                    if extract_pe(fp):
-                        file_name = file_name.split('_')[1]+'.vir'
-                        target_path = os.path.join(MOVE_PATH, file_name)
-                        shutil.copy2(fp, target_path)
-                        print("FINISHED!!!! {} to {}".format(fp, target_path))
-                except Exception as e:
-                    print(e)
+            for file_name in files:
+                full_file_name = os.path.join(_path, file_name)
+                print(check_characteristics(full_file_name))
