@@ -1,10 +1,7 @@
 import os
 import struct
 
-# FILE_PATH = r'/home/seclab/Documents/meseum_data/virussign'
 FILE_PATH = r'/home/seclab/Documents/meseum_data/virusshare_only_pe_32_two'
-characteristics_set = set()
-# final_n + 3 + 19
 
 def check_characteristics(file_path):
     with open(file_path, 'rb') as f:
